@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vite App</title>
+  </head>
+  <style>
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        padding-top: 80px; /* Increased height to prevent overlap with fixed navbar */
+    }
+    .content-wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center; /* Vertically center the login form */
+        justify-content: center; /* Horizontally center the login form */
+    }
+    .footer-fixed {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        z-index: 1030; /* Ensure footer is above other content but below navbar if needed */
+    }
+  </style>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

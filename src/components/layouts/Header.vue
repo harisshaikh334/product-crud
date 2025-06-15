@@ -1,0 +1,32 @@
+<script setup>
+import {RouterLink} from "vue-router";
+</script>
+<template>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <RouterLink class="navbar-brand" to="/">CRUD App</RouterLink>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <RouterLink class="nav-link active" aria-current="page" to="/home">Home</RouterLink>
+                    </li>
+                    <li class="nav-item">
+                        <RouterLink class="nav-link" to="/add-product">Add Product</RouterLink>
+                    </li>
+                </ul>
+                <ul class="navbar-nav" id="authLinks">
+                    <!-- Login/Signup or User Info will be injected here by JavaScript -->
+                    <li class="nav-item">
+                        <RouterLink class="nav-link" to="/login">Login</RouterLink>
+                    </li>
+                    <li class="nav-item">
+                        <RouterLink class="nav-link" to="/register">Sign Up</RouterLink>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</template>
