@@ -55,7 +55,11 @@
             .then(response => response.json())
             .then(data => {
                 console.log("data is ", data);
-                productList = data;
+                productList.length = 0;
+                data.forEach(element => {
+                    productList.push(element);
+                });
+                
             })
     }
 </script>
