@@ -1,4 +1,5 @@
 <template>
+    <Loader v-if="isLoad" />
     <div class="content-wrapper">
         <div class="container my-3">
             <h1 class="text-center mb-5">Our Products</h1>
@@ -17,49 +18,67 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-                
+                </div>    
                 <!-- Add more product items as needed -->
             </div>
         </div>
     </div>
 </template>
 <script setup>
-    import {onMounted, reactive} from "vue";
+    import {onMounted, reactive, ref} from "vue";
     import { RouterLink } from "vue-router";
+    import Loader from "@/components/layouts/Loader.vue";
+    import productService from '@/services/productService';
+    import { useSwal } from '@/utility/useSwal';
+
+    const {showSuccess, showError, showConfirm} = useSwal();
     
     let productList = reactive([]);
-
+    let isLoad = ref(false);
     onMounted(() => {
         fetchProductList();
     })
 
 
-    const handleDelete = (data) => {
-        console.log("delete click ", data);
-        fetch('https://fakestoreapi.com/products/1', {
-            method: 'DELETE'
-        })
-            .then(response => response.json())
-            .then(data =>{
-                 alert("product deleted successfully.");
-                 productList.length = 0;
-                 fetchProductList();
-            });
-
+    const handleDelete = async (data) => {
+        const confirm = await showConfirm("message");
+        if (confirm.isConfirmed) {
+            isLoad.value = true;
+            productService.deleteProduct(data.id).then(() => {
+                showSuccess("product deleted successfully.");
+                isLoad.value = false;
+                productList.length = 0;
+                fetchProductList();
+            }, (err) => {
+                showError("Something went wrong. Please try again later.")
+                console.log("delete err ", err);
+            })
+        }
+        
     }
 
     const fetchProductList = () => {
-        fetch('https://fakestoreapi.com/products')
-            .then(response => response.json())
-            .then(data => {
-                console.log("data is ", data);
-                productList.length = 0;
-                data.forEach(element => {
-                    productList.push(element);
-                });
+        isLoad.value = true;
+        productService.getProducts().then((data) => {
+            productList.length = 0;
+            data.forEach(element => {
+                productList.push(element);
+            });
+            isLoad.value = false;
                 
-            })
+        }, (err) => {
+             isLoad.value = false;
+            console.log("err ", err);
+        })
     }
 </script>
+<style scoped>
+.card-body {
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    justify-content: space-between; /* Pushes content to top and bottom within the body */
+}
+/* Push the action buttons to the bottom of the card-body */
+
+
+</style>

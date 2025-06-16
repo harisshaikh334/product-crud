@@ -1,4 +1,5 @@
 <template>
+    <Loader v-if="isLoad" />
     <div class="content-wrapper">
         <div class="container">
             <div class="row justify-content-center">
@@ -34,7 +35,7 @@
                                 
                             </div>
                             <p v-if="apiErr" class="text-center text-danger">{{apiErr}}</p>
-                            <button type="submit" class="btn btn-success w-100 mb-3">Sign Up</button>
+                            <button type="submit" class="btn btn-primary w-100 mb-3">Sign Up</button>
                             <p class="text-center text-muted">Already have an account? <Router-link to="/login" class="text-decoration-none">Login here</Router-link></p>
                         </form>
                     </div>
@@ -49,8 +50,12 @@
     import { reactive, ref, computed } from 'vue';
     import { createUserWithEmailAndPassword } from 'firebase/auth';
     import { auth } from '@/utility/firebase';
-import { useRouter } from 'vue-router';
+    import { useRouter } from 'vue-router';
+    import Loader from '@/components/layouts/Loader.vue';
+    import { useSwal } from '@/utility/useSwal';
 
+    const { showSuccess, showError } = useSwal();
+    let isLoad = ref(false);
     const form = reactive({name: "", email: "", password: "", confirmPassword: ""});
     const apiErr = ref("");
      // Custom validator for alphabets and spaces
@@ -91,12 +96,16 @@ import { useRouter } from 'vue-router';
         }
         const isFormValid = await v$.value.$validate();
         if (isFormValid) {
+            isLoad.value = true;
             createUserWithEmailAndPassword(auth, form.email, form.password).then((res) => {
                 console.log("res ", res.user.accessToken);
+                isLoad.value = false;
                 if (res.user.accessToken) {
-                    router.push("/home");
+                    router.push("/login");
+                    showSuccess("User registered successfully!");
                 }
             }, (err) => {
+                isLoad.value = false;
                 apiErr.value = err;
             })
         }

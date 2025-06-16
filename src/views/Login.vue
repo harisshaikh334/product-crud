@@ -1,4 +1,5 @@
 <template>
+    <Loader v-if="isLoad" />
     <div class="content-wrapper">
         <div class="container">
             <div class="row justify-content-center">
@@ -36,7 +37,13 @@
     import { auth } from '@/utility/firebase';
     import { signInWithEmailAndPassword } from 'firebase/auth';
     import { useRouter } from 'vue-router';
+    import Loader from '@/components/layouts/Loader.vue';
+    import { useSwal } from '@/utility/useSwal';
+    import { userAuthStore } from "@/stores/authStore";
+    const authStore = userAuthStore();
 
+    const { showSuccess, showError } = useSwal();
+    let isLoad = ref(false);
     const router = useRouter();
     const form = reactive({email: "", password: ""});
     const apiErr = ref("");
@@ -50,13 +57,17 @@
         v$.value.$touch();
         apiErr.value = "";
         const isFormValid = await v$.value.$validate()
-        console.log("submit form ",form.email,form.password, v$.value.email, v$.value.password);
         if (isFormValid)
+            isLoad.value = true;
             signInWithEmailAndPassword(auth, form.email, form.password).then((res) => {
-                console.log("res ", res);
+                console.log("res ", res.user);
+                localStorage.setItem("user", JSON.stringify(res.user));
                 router.push("/home");
+                authStore.setUserLogin(true);
+                showSuccess("Login successfull!");
+                isLoad.value = false;
             }, (err) => {
-                console.log("err for login ", err);
+                isLoad.value = false;
                 apiErr.value = err;
             })
     };
